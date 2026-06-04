@@ -1,0 +1,103 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  password  String
+  role      String   @default("USER")
+  plan      String   @default("FREE")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  campaigns    Campaign[]
+  phoneNumbers PhoneNumber[]
+  callRoutes   CallRoute[]
+  ivrMenus     IvrMenu[]
+}
+
+model Campaign {
+  id        String   @id @default(cuid())
+  name      String
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  status    String   @default("active")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  phoneNumbers PhoneNumber[]
+  callRoutes   CallRoute[]
+}
+
+model PhoneNumber {
+  id          String   @id @default(cuid())
+  number      String   @unique
+  telnyxId    String   @unique
+  campaignId  String?
+  campaign    Campaign? @relation(fields: [campaignId], references: [id])
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  status      String   @default("active")
+  inboundTrunk String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  calls      Call[]
+}
+
+model CallRoute {
+  id          String   @id @default(cuid())
+  name        String
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  campaignId  String?
+  campaign    Campaign? @relation(fields: [campaignId], references: [id])
+  priority    Int      @default(1)
+  weight      Int      @default(100)
+  destination String
+  destinationType String @default("number")
+  enabled     Boolean  @default(true)
+  timeFrom    String?
+  timeTo      String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model IvrMenu {
+  id          String   @id @default(cuid())
+  name        String
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  greeting    String?
+  options     String?
+  timeout     Int      @default(10)
+  enabled     Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Call {
+  id             String   @id @default(cuid())
+  telnyxCallId   String   @unique
+  phoneNumberId  String?
+  phoneNumber    PhoneNumber? @relation(fields: [phoneNumberId], references: [id])
+  callerNumber   String
+  calledNumber   String
+  direction      String
+  duration       Int      @default(0)
+  status         String
+  recordingUrl   String?
+  voipBlocked    Boolean  @default(false)
+  ivrAuthenticated Boolean @default(false)
+  tags           String?
+  cost           Float?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}

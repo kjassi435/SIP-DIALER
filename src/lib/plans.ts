@@ -1,0 +1,43 @@
+export const PLANS = {
+  FREE: {
+    name: 'Free',
+    price: 0,
+    maxNumbers: 1,
+    maxCampaigns: 1,
+    maxRoutes: 1,
+    maxIvrMenus: 1,
+    maxSipAccounts: 0,
+    callRecording: false,
+    analyticsDays: 7,
+    apiAccess: false,
+    whiteLabel: false,
+  },
+  BASIC: {
+    name: 'Basic',
+    price: 1.99,
+    maxNumbers: 5,
+    maxCampaigns: 5,
+    maxRoutes: 5,
+    maxIvrMenus: 3,
+    maxSipAccounts: 1,
+    callRecording: true,
+    analyticsDays: 30,
+    apiAccess: false,
+    whiteLabel: false,
+  },
+  PREMIUM: {
+    name: 'Premium',
+    price: 4.99,
+    maxNumbers: Infinity,
+    maxCampaigns: Infinity,
+    maxRoutes: Infinity,
+    maxIvrMenus: Infinity,
+    maxSipAccounts: Infinity,
+    callRecording: true,
+    analyticsDays: Infinity,
+    apiAccess: true,
+    whiteLabel: true,
+  },
+} as const
+
+export type PlanKey = keyof typeof PLANS
